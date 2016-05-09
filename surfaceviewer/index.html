@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link type="text/css" href="css/jquery-ui-1.8.10.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="css/brainbrowser.css" rel="Stylesheet" />
+    <link rel="icon" type="image/png" href="../img/brain.png">
+    <title>Brain-VR Viewer</title>
+  
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ 
+  </head>
+  <body>
+    
+ 
+
+    <div id="display"> 
+ 
+      <!-- Loading image from: http://www.ajaxload.info/ -->
+      <div id="loading" style="display: none;"><img src="img/ajax-loader.gif" /></div>
+
+      <!-- Brain in the background --> 
+      <div id="brainbrowser"></div>
+
+      <!-- left sided control -->
+      <div id="controls">
+        <div id="controls-content">
+         
+          <div id="color-map-box" class="box half_box2">
+            Color Map of Object:      
+          </div>
+
+          <div id="background_select" class="box half_box2">
+            Background Color:
+            <select id="clear_color">
+              <option value="0x000000">Black</option>
+              <option value="0x888888">Gray</option>
+              <option value="0xffffff">White</option>
+              <option value="0xff0000">Red</option>
+              <option value="0x00ff00">Green</option>
+              <option value="0x0000ff">Blue</option>
+              <option value="0x00ffff">Cyan</option>
+              <option value="0xff00ff">Magenta</option>
+              <option value="0xffff00">Yellow</option>
+            </select>
+          </div>
+
+
+          <div id="data-range-box" class="box full_box">
+            <h4>Thresholding</h4>
+            <div id="data-range">
+            </div>
+            <div id="blend-box"></div>
+          </div>
+
+          <div class="combo_box">
+            <div id="views" class="box half_box" >
+              <h4>Views:</h4>
+              <div id="hem_views_1" class="half_box">
+                
+                <input id="hem_superior" class="view_button" type="radio" name="hem_view" value="superior" checked="true">Superior<br />
+                <input id="hem_medial" class="view_button" type="radio" name="hem_view" value="medial">Medial<br />
+                <input id="hem_anterior" class="view_button" type="radio" name="hem_view" value="anterior">Anterior
+              </div>
+              <div id="hem_views_2" class="half_box">
+                
+                <input id="hem_inferior"  class="view_button" type="radio" name="hem_view" value="inferior">Inferior<br />
+                <input id="hem_lateral"   class="view_button" type="radio" name="hem_view" value="lateral">Lateral<br />
+                <input id="hem_posterior" class="view_button" type="radio" name="hem_view" value="posterior">Posterior
+              </div>
+              <p>
+                Autorotate:
+                <span id="autorotate-controls" class="buttonset">
+                  <input type="checkbox"  id="autorotateX"><label for="autorotateX">X</label>
+                  <input type="checkbox"  id="autorotateY"><label for="autorotateY">Y</label>
+                  <input type="checkbox"  id="autorotateZ"><label for="autorotateZ">Z</label>
+                </span>
+              </p>
+              <p>
+                Grid:
+                <span id="grid-controls" class="buttonset">
+                  <input type="checkbox"  id="gridX"><label for="gridX">X</label>
+                  <input type="checkbox"  id="gridY"><label for="gridY">Y</label>
+                  <input type="checkbox"  id="gridZ"><label for="gridZ">Z</label>
+                </span>
+              </p>
+              <p>
+                <input id="axes-controls" type="checkbox">Display axes<br />
+              </p>
+              <p>
+                <a class="button" id="resetview">Reset View</a>
+                <input type="checkbox" class="button" id="meshmode"><label for="meshmode">Mesh Mode</label>
+              </p>
+              <p>
+                <input type="checkbox" class="button" id="threedee"><label for="threedee">3D Glasses!</label>
+                <span id="screenshot" class="button">Screenshot</span>
+              </p>
+            </div>
+            <div id="shape-cell" class="box half_box">
+              <div id="shapes">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div> <!--controls --> 
+  
+
+      <div id="vertex-data-wrapper">
+        <div id="vertex-data">
+           <div id="paint-controls" class="paint-box">
+              <h4> Paint value (ctrl-click to paint): </h4> 
+              <input id="paint-value" size="5">
+              <span id="paint-color"></span>
+           </div>
+           <br>
+          <h4>Select a point on the surface<BR>(shift-click)</h4>
+          <div>X: <span id="pick-x" class="pick-data"></span></div>
+          <div>Y: <span id="pick-y" class="pick-data"></span></div>
+          <div>Z: <span id="pick-z" class="pick-data"></span></div>
+          <div>Vertex number: <span id="pick-index" class="pick-data"></span></div>
+          <div id="pick-value-wrapper" style="display:none"> Value: <input id="pick-value" class="pick-data" size="5">
+            <span id="pick-color" class="pick-data"></span>
+            <div id="intensity-data-export" style="display:none">
+              <a id="intensity-data-export-link" target="_blank">Export new intensity values</a>
+            </div>
+          </div>
+
+          <div id="pick-label-wrapper" style="display:none">Region: <span id="pick-label" class="pick-data"></span></div>
+          <div id="annotation-wrapper" style="display:none">
+            <h4>
+              Add an annotation for this vertex!
+            </h4>
+            <div>
+              Image URL: <input type="text" id="annotation-image">
+            </div>
+            <div>
+              Link URL: <input type="text" id="annotation-url">
+            </div>
+            <div>
+              Text: <div><textarea id="annotation-text"></textarea></div>
+            </div>
+            <input type="submit" id="annotation-save" value="Save">
+          </div>
+          <div id="annotation-display" style="display:none">
+            <h3 id="annotation-header">Your Annotations</h3>
+            <div id="annotation-media"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+ 
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Load Data
+        </a>
+        <ul class="dropdown-menu">
+          <li class="dropdown-header">Load Models</li>
+          <li><input type="file" id="mniobj" style="display: none;"  /><a href="#" onclick="document.getElementById('mniobj').click();"/>MNI OBJ</a></li>
+          <li><input type="file" id="freesurferbin" style="display: none;" /><a href="#" onclick="document.getElementById('freesurferbin').click();">Freesurfer Binary</a></li>
+          <li><input type="file" id="freesurferasc" style="display: none;" /><a href="#" onclick="document.getElementById('freesurferasc').click();">Freesurfer ASC</a></li>
+          <li><input type="file" id="wavefrontobj" style="display: none;" /><a href="#" onclick="document.getElementById('wavefrontobj').click();">Wavefront OBJ</a></li>
+          <li><input type="file" id="json" style="display: none;" /><a href="#" onclick="document.getElementById('json').click();">JSON</a></li>
+          
+          <!-- Division: Load Per-Vertex Data -->  
+           <li class="divider"></li>
+           <li class="dropdown-header">Load Per-vertex Data</li>
+          <li><input type="file" id="textdata" style="display: none;" /><a href="#" onclick="document.getElementById('textdata').click();"/>Text</a></li>
+          <li><input type="file" id="freesurferbindata" style="display: none;" /><a href="#" onclick="document.getElementById('freesurferbindata').click();">Freesurfer Binary</a></li>
+          <li><input type="file" id="freesurferascdata" style="display: none;" /><a href="#" onclick="document.getElementById('freesurferascdata').click();">Freesurfer ASC</a></li>
+          <li class="divider"></li>
+           <li class="dropdown-header">Load Color Map</li>
+            <li><input type="file" id="colorMap" style="display: none;" /><a href="#" onclick="document.getElementById('colorMap').click();">Text</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Examples </a>
+        <ul class="dropdown-menu" id="examples">
+              <li><a href="#" class="example" data-example-name="atlas">Brain Atlas</a> </li>
+              <li><a href="#" class="example" data-example-name="cortical_thickness">Brain with Cortical Thickness Map</a></li>
+              <li><a href="#" class="example" data-example-name="blend">Blend</a> </li>
+              <li><a href="#" class="example" data-example-name="dti">DTI and Mesh Brain</a> </li>
+              <li><a href="#" class="example" data-example-name="dbs">JSON Deep Brain Stimulation</a></li>
+              <li><a href="#" class="example" data-example-name="freesurferbin">Freesurfer binary Left Hemisphere</a></li>
+              <li><a href="#" class="example" data-example-name="freesurferasc">Freesurfer ASC Left Hemisphere</a></li>
+              <li><a href="#" class="example" data-example-name="car">Wavefront OBJ Automobile</a></li>
+      </ul>
+      </li>
+      <li class="dropdown">
+         <a class ="dropdown-toggle" data-toggle="dropdown" href="#"> Settings </a>
+         <ul class="dropdown-menu" id="examples">
+         <li id="clearshapes"><a href="#">Clear Shapes</a></li>
+         <li id="control-button"><a href="#">Show/Hide Controls</a></li>
+         <li id="control-button2"><a href="../aframe/index.html">Enter VR</a></li> 
+
+      </ul>
+      </li>
+
+    
+    </ul>
+   </div>
+  </nav>
+  
+
+    <!-- all the scripts -->
+
+
+    <script src="js/jquery-1.6.4.min.js"></script>
+    <script src="js/jquery-ui-1.8.10.custom.min.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/localStorage.js"></script>
+    <script src="js/brainbrowser.js"></script>
+    <script src="js/tree-store.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/surface-viewer.js"></script>
+
+    <script src="js/loader.js"></script>
+    <script src="js/color-map.js"></script>
+   
+    
+    <script src="js/three.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/parse-intensity-data.js"></script>
+
+    <script src="js/annotations.js"></script>
+    <script src="js/color.js"></script>
+    <script src="js/loading.js"></script>
+    <script src="js/rendering.js"></script>
+    <script src="js/views.js"></script>
+   
+    <script src="js/surface-viewer-demo.config.js"></script>
+    <script src="js/surface-viewer-demo.js"></script>
+
+    <script src="js/AnaglyphEffect.js"></script>
+    
+    
+    <script src="js/indexed.js"></script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Patient 1</title>
+     <script src="js/aframe.min.js"></script>
+     <script src="js/aframe-keyboard-controls.js"></script>
+ 
+     <link rel="icon" type="image/png" href="img/brain.png">
+     <link type="text/css" href="css/aframe.css" rel="stylesheet">
+   
+  </head>
+
+  <body>
+
+      <a-scene stats proxy-controls="debug: true; enableOverlay: true;">
+
+      <a-entity camera position="0 1 10" look-controls keyboard-controls="cameraUse: true">
+         <a-cursor color="#2E3A87"></a-cursor>
+      </a-entity>
+      
+      <a-assets>
+        <img id="xgridimg" src="assets/img/red_grid.png">
+        <img id="ygridimg" src="assets/img/blue_grid.png">
+        <img id="zgridimg" src="assets/img/green_grid.png">
+      </a-assets>
+      
+
+      <a-entity id="parent" keyboard-controls="cameraUse: false" position="-1 0 0 "> 
+
+        <a-obj-model id="brain" src=".." position="0 0 0" rotation="0 0 0" scale="0.05 0.05 0.05">
+        </a-obj-model>
+
+      </a-entity>
+      
+
+      <a-sky id="backgroundCol" color="black"></a-sky>
+
+
+      <!--Lighting-->     
+      
+   
+    
+      <!--axis -->
+     
+        <a-cylinder id="zaxis"  position="0 0 0" radius="0.01" color="red" 
+        scale="1 15 1" rotation="-90 0 0" visible="true"></a-cylinder>
+        <a-cylinder id="xaxis"  position="0 0 0" radius="0.01" color="green" 
+        scale="1 15 1" rotation="0 0 90" visible="true"></a-cylinder>
+        <a-cylinder id="yaxis" position="0 0 0" radius="0.01" color="blue" 
+        scale="1 15 1" rotation="0 90 0" visible="true"></a-cylinder>
+     
+      <!--grid-->
+      <a-entity id="zgrid">
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation="-90 0 0" material="src:#zgridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation=" 90 0 0" material="src:#zgridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+      </a-entity>
+
+      <a-entity id="xgrid">
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation="0 -180 0"  material="src:#xgridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation="0 0 0"  material="src:#xgridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+     </a-entity>
+
+     <a-entity id="ygrid" >
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation="0 90 0"  material="src:#ygridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+        <a-entity geometry="primitive:plane;width:10;height:10" rotation="0 -90 0"  material="src:#ygridimg; repeat:1 2; transparent: true;"
+        visible="true"></a-entity>
+      </a-entity>
+
+      </a-scene>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="js/indexedaframe.js"></script>
+
+  </body>
+</html>
